@@ -1,41 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>FH6 Telemetry Dump</title>
     <style>
-        body { background: #111; color: #0f0; font-family: monospace; padding: 20px; }
-        #data-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .prop-row { border-bottom: 1px solid #333; padding: 5px; }
+        /* Container forced to your exact resolution */
+        body {
+            width: 1270px;
+            height: 700px;
+            margin: 0;
+            padding: 20px;
+            overflow: hidden;
+            background: #111;
+            color: #0f0;
+            font-family: 'Segoe UI', monospace;
+            transform-origin: top left; /* Critical for scaling */
+            box-sizing: border-box;
+        }
+
+        #data-container { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+        }
+        .prop-row { 
+            border: 1px solid #333; 
+            padding: 5px; 
+            font-size: 12px;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
-<h1>SimHub Telemetry Dump</h1>
-<div id="data-container"></div>
 
-<script>
-    const container = document.getElementById('data-container');
+    <h1>FH6 Live Telemetry (1270x700)</h1>
+    <div id="data-container"></div>
 
-    function updateUI() {
-        // 'root' is the global object SimHub injects into the web dashboard
-        if (typeof root !== 'undefined') {
-            container.innerHTML = ''; // Clear for fresh update
+    <script>
+        const container = document.getElementById('data-container');
 
-            // Iterate through keys in the root object
-            for (let key in root) {
-                let val = root[key];
-                let div = document.createElement('div');
-                div.className = 'prop-row';
-                div.innerHTML = `<strong>${key}</strong>: ${val}`;
-                container.appendChild(div);
-            }
-        } else {
-            container.innerHTML = "Waiting for SimHub Data...";
+        // Scaling logic to keep your 1270x700 aspect ratio intact
+        function fitToWindow() {
+            const scale = Math.min(window.innerWidth / 1270, window.innerHeight / 700);
+            document.body.style.transform = `scale(${scale})`;
         }
-        // Request next frame to keep it fluid
-        window.requestAnimationFrame(updateUI);
-    }
+        window.addEventListener('resize', fitToWindow);
+        fitToWindow();
 
-    // Start the loop
-    updateUI();
-</script>
+        // Telemetry update loop
+        function updateUI() {
+            if (typeof root !== 'undefined') {
+                container.innerHTML = '';
+                
+                for (let key in root) {
+                    let div = document.createElement('div');
+                    div.className = 'prop-row';
+                    div.innerHTML = `<strong>${key}</strong>: ${root[key]}`;
+                    container.appendChild(div);
+                }
+            } else {
+                container.innerHTML = "Waiting for SimHub Data... (Ensure you are accessing via 1270.0.0.1:8888)";
+            }
+            window.requestAnimationFrame(updateUI);
+        }
+
+        updateUI();
+    </script>
 </body>
 </html>
