@@ -36,35 +36,35 @@
     <h1>FH6 Live Telemetry (1270x700)</h1>
     <div id="data-container"></div>
 
-    <script>
-        const container = document.getElementById('data-container');
+    // Replace with your actual local PC IP (e.g., 192.168.1.100)
+    const PC_IP = "YOUR_PC_IP_HERE";
+    const socket = new WebSocket(`ws://${PC_IP}:8888/telemetry`);
 
-        // Scaling logic to keep your 1270x700 aspect ratio intact
-        function fitToWindow() {
-            const scale = Math.min(window.innerWidth / 1270, window.innerHeight / 700);
-            document.body.style.transform = `scale(${scale})`;
-        }
-        window.addEventListener('resize', fitToWindow);
-        fitToWindow();
+    const container = document.getElementById('data-container');
 
-        // Telemetry update loop
-        function updateUI() {
-            if (typeof root !== 'undefined') {
-                container.innerHTML = '';
-                
-                for (let key in root) {
-                    let div = document.createElement('div');
-                    div.className = 'prop-row';
-                    div.innerHTML = `<strong>${key}</strong>: ${root[key]}`;
-                    container.appendChild(div);
-                }
-            } else {
-                container.innerHTML = "Waiting for SimHub Data... (Ensure you are accessing via 1270.0.0.1:8888)";
-            }
-            window.requestAnimationFrame(updateUI);
-        }
+    // Scaling logic
+    function fitToWindow() {
+    const scale = Math.min(window.innerWidth / 1270, window.innerHeight / 700);
+    document.body.style.transform = `scale(${scale})`;
+    }
+    window.addEventListener('resize', fitToWindow);
+    fitToWindow();
 
-        updateUI();
-    </script>
+    // Handle incoming telemetry data
+    socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+
+    // Clear container and rebuild based on the new data object
+    container.innerHTML = '';
+    for (let key in data) {
+    let div = document.createElement('div');
+    div.className = 'prop-row';
+    div.innerHTML = `<strong>${key}</strong>: ${data[key]}`;
+    container.appendChild(div);
+    }
+    };
+
+    socket.onopen = () => console.log("Connected to SimHub Telemetry");
+    socket.onerror = (err) => console.error("Connection failed. Check your IP/Firewall.", err);
 </body>
 </html>
