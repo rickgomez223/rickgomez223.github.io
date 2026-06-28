@@ -36,35 +36,37 @@
     <h1>FH6 Live Telemetry (1270x700)</h1>
     <div id="data-container"></div>
 
-    // Replace with your actual local PC IP (e.g., 192.168.1.100)
-    const PC_IP = "192.168.50.192";
-    const socket = new WebSocket(`ws://${PC_IP}:8888/telemetry`);
+    <script>
+        // Replace with your actual local PC IP (e.g., 192.168.1.100)
+        const PC_IP = "192.168.50.192";
+        const socket = new WebSocket(`ws://${PC_IP}:8888/telemetry`);
 
-    const container = document.getElementById('data-container');
+        const container = document.getElementById('data-container');
 
-    // Scaling logic
-    function fitToWindow() {
-    const scale = Math.min(window.innerWidth / 1270, window.innerHeight / 700);
-    document.body.style.transform = `scale(${scale})`;
-    }
-    window.addEventListener('resize', fitToWindow);
-    fitToWindow();
+        // Scaling logic
+        function fitToWindow() {
+            const scale = Math.min(window.innerWidth / 1270, window.innerHeight / 700);
+            document.body.style.transform = `scale(${scale})`;
+        }
+        window.addEventListener('resize', fitToWindow);
+        fitToWindow();
 
-    // Handle incoming telemetry data
-    socket.onmessage = function(event) {
-    const data = JSON.parse(event.data);
+        // Handle incoming telemetry data
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
 
-    // Clear container and rebuild based on the new data object
-    container.innerHTML = '';
-    for (let key in data) {
-    let div = document.createElement('div');
-    div.className = 'prop-row';
-    div.innerHTML = `<strong>${key}</strong>: ${data[key]}`;
-    container.appendChild(div);
-    }
-    };
+            // Clear container and rebuild based on the new data object
+            container.innerHTML = '';
+            for (let key in data) {
+                let div = document.createElement('div');
+                div.className = 'prop-row';
+                div.innerHTML = `<strong>${key}</strong>: ${data[key]}`;
+                container.appendChild(div);
+            }
+        };
 
-    socket.onopen = () => console.log("Connected to SimHub Telemetry");
-    socket.onerror = (err) => console.error("Connection failed. Check your IP/Firewall.", err);
+        socket.onopen = () => console.log("Connected to SimHub Telemetry");
+        socket.onerror = (err) => console.error("Connection failed. Check your IP/Firewall.", err);
+    </script>
 </body>
 </html>
