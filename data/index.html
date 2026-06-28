@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { background: #111; color: #0f0; font-family: monospace; padding: 20px; }
+        #data-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .prop-row { border-bottom: 1px solid #333; padding: 5px; }
+    </style>
+</head>
+<body>
+<h1>SimHub Telemetry Dump</h1>
+<div id="data-container"></div>
+
+<script>
+    const container = document.getElementById('data-container');
+
+    function updateUI() {
+        // 'root' is the global object SimHub injects into the web dashboard
+        if (typeof root !== 'undefined') {
+            container.innerHTML = ''; // Clear for fresh update
+
+            // Iterate through keys in the root object
+            for (let key in root) {
+                let val = root[key];
+                let div = document.createElement('div');
+                div.className = 'prop-row';
+                div.innerHTML = `<strong>${key}</strong>: ${val}`;
+                container.appendChild(div);
+            }
+        } else {
+            container.innerHTML = "Waiting for SimHub Data...";
+        }
+        // Request next frame to keep it fluid
+        window.requestAnimationFrame(updateUI);
+    }
+
+    // Start the loop
+    updateUI();
+</script>
+</body>
+</html>
