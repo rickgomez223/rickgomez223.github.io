@@ -4,18 +4,20 @@
     <meta charset="UTF-8">
     <style>
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 1278px;
-            height: 718px;
-            overflow: hidden; /* Prevents scrollbars */
-            background-color: black;
-        }
-        #bg-video {
-            width: 1278px;
-            height: 718px;
-            object-fit: cover; /* Ensures video fills area without distortion */
-        }
+    margin: 0;
+    padding: 0;
+    width: 100vw;   /* Force viewport width */
+    height: 100vh;  /* Force viewport height */
+    overflow: hidden;
+    background-color: transparent; /* Changed to transparent */
+}
+
+#bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This will crop the video to fill 1278x718 perfectly */
+    display: block;
+}
     </style>
 </head>
 <body>
